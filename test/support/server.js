@@ -21,28 +21,20 @@ var app = koa();
 
 app.name = 'koa-session-test';
 app.outputErrors = true;
-app.keys = ['keys', 'keykeys'];
 app.proxy = true; // to support `X-Forwarded-*` header
 
 var store = new Store();
 app.use(session({
-  key: 'koss:test_sid',
   prefix: 'koss:test',
+  path: '/session',
   ttl: 1000,
-  cookie: {
-    maxAge: 86400,
-    path: '/session'
-  },
   store: store
 }));
 
 // will ignore repeat session
 app.use(session({
   key: 'koss:test_sid',
-  cookie: {
-    maxAge: 86400,
-    path: '/session'
-  }
+  path: '/session'
 }));
 
 app.use(function *controllers() {
@@ -69,9 +61,6 @@ app.use(function *controllers() {
   case '/session/remove':
     remove(this);
     break;
-  case '/session/httponly':
-    switchHttpOnly(this);
-    break;
   default:
     other(this);
   }
@@ -90,12 +79,6 @@ function get(ctx) {
 function remove(ctx) {
   ctx.session = null;
   ctx.body = 0;
-}
-
-function switchHttpOnly(ctx) {
-  var httpOnly = ctx.session.cookie.httpOnly;
-  ctx.session.cookie.httpOnly = !httpOnly;
-  ctx.body = 'httpOnly: ' + !httpOnly;
 }
 
 function other(ctx) {

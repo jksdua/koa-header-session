@@ -1,7 +1,7 @@
 TESTS = test/*.test.js
-REPORTER = tap
+REPORTER = spec
 TIMEOUT = 3000
-MOCHA_OPTS =
+MOCHA_OPTS = --bail
 
 install:
 	@npm install --registry=http://registry.npm.taobao.org

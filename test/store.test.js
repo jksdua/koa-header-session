@@ -9,6 +9,10 @@
 
 'use strict';
 
+
+var HEADER = 'X-Session-ID';
+
+
 /**
  * Module dependencies.
  */
@@ -30,8 +34,8 @@ describe('test/store.test.js', function () {
       commonApp.store.emit('connect');
       mm.restore();
     });
-    var cookie;
-    var mockCookie = 'koa.sid=s:dsfdss.PjOnUyhFG5bkeHsZ1UbEY7bDerxBINnZsD5MUguEph8; path=/; httponly';
+    var header;
+    var mockHeader = 'oFXT7g-1gwIBH4X_zMua7A43qSuu-PW_';
 
     it('should get session error when disconnect', function (done) {
       commonApp.store.emit('disconnect');
@@ -47,9 +51,7 @@ describe('test/store.test.js', function () {
       .get('/session/get')
       .expect(/1/)
       .expect(200, function (err, res) {
-        cookie = res.headers['set-cookie'].join(';');
-        cookie.indexOf('httponly').should.above(0);
-        cookie.indexOf('expires=').should.above(0);
+        header = res.headers[HEADER.toLowerCase()];
         done(err);
       });
     });
@@ -60,7 +62,7 @@ describe('test/store.test.js', function () {
       });
       request(commonApp)
       .get('/session/get')
-      .set('cookie', cookie)
+      .set(HEADER, header)
       .expect(500, done);
     });
 
@@ -70,14 +72,14 @@ describe('test/store.test.js', function () {
       });
       request(commonApp)
       .get('/session/notuse')
-      .set('cookie', cookie)
+      .set(HEADER, header)
       .expect(500, done);
     });
 
     it('should handler session error when store.set error', function (done) {
       request(commonApp)
       .get('/session/get')
-      .set('cookie', cookie)
+      .set(HEADER, header)
       .expect(200)
       .expect(/2/, function () {
         mm(commonApp.store, 'set', function *() {
@@ -85,7 +87,7 @@ describe('test/store.test.js', function () {
         });
         request(commonApp)
         .get('/session/get')
-        .set('cookie', cookie)
+        .set(HEADER, header)
         .expect(500)
         .expect(/Internal Server Error/, done);
       });
@@ -97,8 +99,8 @@ describe('test/store.test.js', function () {
       deferApp.store.emit('connect');
       mm.restore();
     });
-    var cookie;
-    var mockCookie = 'koa.sid=s:dsfdss.PjOnUyhFG5bkeHsZ1UbEY7bDerxBINnZsD5MUguEph8; path=/; httponly';
+    var header;
+    var mockHeader = 'oFXT7g-1gwIBH4X_zMua7A43qSuu-PW_';
 
     it('should get session error when disconnect', function (done) {
       deferApp.store.emit('disconnect');
@@ -114,9 +116,7 @@ describe('test/store.test.js', function () {
       .get('/session/get')
       .expect(/1/)
       .expect(200, function (err, res) {
-        cookie = res.headers['set-cookie'].join(';');
-        cookie.indexOf('httponly').should.above(0);
-        cookie.indexOf('expires=').should.above(0);
+        header = res.headers[HEADER.toLowerCase()];
         done(err);
       });
     });
@@ -127,7 +127,7 @@ describe('test/store.test.js', function () {
       });
       request(deferApp)
       .get('/session/get')
-      .set('cookie', cookie)
+      .set(HEADER, header)
       .expect(500, done);
     });
 
@@ -137,14 +137,14 @@ describe('test/store.test.js', function () {
       });
       request(deferApp)
       .get('/session/notuse')
-      .set('cookie', cookie)
+      .set(HEADER, header)
       .expect(200, done);
     });
 
     it('should handler session error when store.set error', function (done) {
       request(commonApp)
       .get('/session/get')
-      .set('cookie', cookie)
+      .set(HEADER, header)
       .expect(200)
       .expect(/2/, function () {
         mm(commonApp.store, 'set', function *() {
@@ -152,7 +152,7 @@ describe('test/store.test.js', function () {
         });
         request(commonApp)
         .get('/session/get')
-        .set('cookie', cookie)
+        .set(HEADER, header)
         .expect(500)
         .expect(/Internal Server Error/, done);
       });
