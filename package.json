@@ -1,7 +1,7 @@
 {
   "name": "koa-header-session",
   "description": "koa header session store by memory, redis or others",
-  "repository": "jksdua/generic-session",
+  "repository": "jksdua/koa-header-session",
   "version": "1.0.0",
   "keywords": ["koa", "middleware", "session"],
   "author": "jksdua <jksdua@gmail.com>",
