@@ -31,7 +31,7 @@ describe('test/session.test.js', function () {
     it('should warn when in production', function (done) {
       mm(process.env, 'NODE_ENV', 'production');
       mm(console, 'warn', function (message) {
-        message.should.equal('Warning: koa-generic-session\'s MemoryStore is not\n' +
+        message.should.equal('Warning: koa-header-session\'s MemoryStore is not\n' +
         'designed for a production environment, as it will leak\n' +
         'memory, and will not scale past a single process.');
         done();
@@ -133,6 +133,24 @@ describe('test/session.test.js', function () {
       request(app)
       .get('/session/rewrite')
       .expect({foo: 'bar'}, done);
+    });
+
+    it('should GET /session ok', function (done) {
+      request(app)
+        .get('/session/id?test_sid_append=test')
+        .expect(/test$/, done);
+    });
+
+    it('should force a session id ok', function (done) {
+      request(app)
+        .get('/session/get')
+        .expect(/.*/, function(err, res) {
+          should.not.exist(err);
+          var val = res.headers['X-Session-ID'];
+          request(app)
+            .get('/session/id?force_session_id=' + val)
+            .expect(new RegExp(val), done);
+        });
     });
   });
 });

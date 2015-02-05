@@ -14,6 +14,7 @@
  */
 var koa = require('koa');
 var http = require('http');
+var uid = require('uid-safe').sync;
 var session = require('../../');
 var Store = require('./store');
 
@@ -24,21 +25,34 @@ app.outputErrors = true;
 app.proxy = true; // to support `X-Forwarded-*` header
 
 var store = new Store();
+
+app.use(function*(next) {
+  if (this.request.query.force_session_id) {
+    this.sessionId = this.request.query.force_session_id;
+  }
+  return yield next;
+});
+
 app.use(session({
   prefix: 'koss:test',
   path: '/session',
   ttl: 1000,
-  store: store
+  store: store,
+  genSid: function *(len) {
+    return uid(len) + this.request.query.test_sid_append;
+  }
 }));
 
 // will ignore repeat session
 app.use(session({
-  key: 'koss:test_sid',
-  path: '/session'
+  path: '/session',
+  genSid: function *(len) {
+    return uid(len) + this.request.query.test_sid_append;
+  }
 }));
 
 app.use(function *controllers() {
-  switch (this.request.url) {
+  switch (this.request.path) {
   case '/favicon.ico':
     this.staus = 404;
     break;
@@ -60,6 +74,9 @@ app.use(function *controllers() {
     break;
   case '/session/remove':
     remove(this);
+    break;
+  case '/session/id':
+    getId(this);
     break;
   default:
     other(this);
@@ -83,6 +100,10 @@ function remove(ctx) {
 
 function other(ctx) {
   ctx.body = ctx.session !== undefined ? 'has session' : 'no session';
+}
+
+function getId(ctx) {
+  ctx.body = ctx.sessionId;
 }
 
 var app = module.exports = http.createServer(app.callback());
