@@ -19,7 +19,7 @@ var HEADER = 'X-Session-ID';
 
 var Session = require('..');
 var koa = require('koa');
-var app = require('./support/defer');
+var app = require('./support/defer')();
 var request = require('supertest');
 var mm = require('mm');
 var should = require('should');

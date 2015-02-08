@@ -2,8 +2,12 @@
   "name": "koa-header-session",
   "description": "koa header session store by memory, redis or others",
   "repository": "jksdua/koa-header-session",
-  "version": "1.1.0",
-  "keywords": ["koa", "middleware", "session"],
+  "version": "1.1.1",
+  "keywords": [
+    "koa",
+    "middleware",
+    "session"
+  ],
   "author": "jksdua <jksdua@gmail.com>",
   "dependencies": {
     "copy-to": "~2.0.1",
@@ -18,7 +22,8 @@
     "contributors": "*",
     "istanbul-harmony": "*",
     "koa": "~0.13.0",
-    "koa-redis": "*",
+    "koa-mongodb": "^1.0.1",
+    "koa-redis": "^1.0.0",
     "mm": "~1.0.1",
     "mocha": "2",
     "should": "~4.3.0",
